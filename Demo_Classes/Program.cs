@@ -12,6 +12,25 @@ namespace Demo_Classes
         {
 
 
+            if (!GetIsValidInteger("Integer: ", 3, out int myInteger))
+            {
+                Console.WriteLine("Attempts Exceeded");
+            }
+            else
+            {
+                Console.WriteLine($"Valid Integer: {myInteger}");
+            }
+
+            if (!GetIsValidDouble("Double: ", 3, out double myDouble))
+            {
+                Console.WriteLine("Attempts Exceeded");
+            }
+            else
+            {
+                Console.WriteLine($"Valid Double: {myDouble}");
+            }
+
+            Console.ReadKey();
         }
 
         #region USER INTERFACE
@@ -81,12 +100,58 @@ namespace Demo_Classes
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Set background and foreground colors for the console
+        /// </summary>
+        /// <param name="background">background color</param>
+        /// <param name="foreground">foreground color</param>
+        static void SetTheme(ConsoleColor background, ConsoleColor foreground)
+        {
+            Console.BackgroundColor = background;
+            Console.ForegroundColor = foreground;
+            Console.Clear();
+        }
+
         #endregion
 
         #region HELPER METHODS
 
         /// <summary>
-        /// get a valid integer from the player - note: if max and min values are both 0, range validation is disabled
+        /// get a valid integer from the user
+        /// </summary>
+        /// <param name="prompt">prompt message in console</param>
+        /// <param name="validInteger">out value</param>
+        /// <returns>true if successful</returns>
+        private static bool GetIsValidInteger(string prompt, int maximumAttempts, out int validInteger)
+        {
+            bool validResponse = false;
+            int attempts = 0;
+
+            do
+            {
+                Console.Write(prompt);
+
+                if (int.TryParse(Console.ReadLine(), out validInteger))
+                {
+                    validResponse = true;
+                }
+                else
+                {
+                    Console.WriteLine($"\tYou must enter an integer value. Please try again.");
+                    Console.WriteLine();
+                }
+
+                attempts++;
+
+            } while (!validResponse && attempts < maximumAttempts);
+
+            Console.CursorVisible = false;
+
+            return validResponse;
+        }
+
+        /// <summary>
+        /// get a valid integer from the user within a specified range
         /// </summary>
         /// <param name="prompt">prompt message in console</param>
         /// <param name="minimumValue">min. value</param>
@@ -96,125 +161,115 @@ namespace Demo_Classes
         private static bool GetIsValidInteger(string prompt, int minimumValue, int maximumValue, int maximumAttempts, out int validInteger)
         {
             bool validResponse = false;
-            int attempts = 1;
-            validInteger = 0;
+            int attempts = 0;
 
-            //
-            // validate on range if either minimumValue and maximumValue are not 0
-            //
-            bool validateRange = (minimumValue != 0 || maximumValue != 0);
-
-            Console.Write(prompt);
-            while (!validResponse && attempts <= maximumAttempts)
+            do
             {
+                Console.Write(prompt);
+
                 if (int.TryParse(Console.ReadLine(), out validInteger))
                 {
-                    if (validateRange)
+                    if (validInteger >= minimumValue && validInteger <= maximumValue)
                     {
-                        if (validInteger >= minimumValue && validInteger <= maximumValue)
-                        {
-                            validResponse = true;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"\tYou must enter an integer value between {minimumValue} and {maximumValue}. Please try again.");
-                            Console.WriteLine();
-                            Console.Write(prompt);
-                        }
+                        validResponse = true;
                     }
                     else
                     {
-                        validResponse = true;
+                        Console.WriteLine($"\tYou must enter an integer value between {minimumValue} and {maximumValue}. Please try again.");
+                        Console.WriteLine();
                     }
                 }
                 else
                 {
                     Console.WriteLine($"\tYou must enter an integer value. Please try again.");
                     Console.WriteLine();
-                    Console.Write(prompt);
                 }
+
                 attempts++;
-            }
+
+            } while (!validResponse && attempts < maximumAttempts);
 
             Console.CursorVisible = false;
 
-            //
-            // check to see if user exceeded the maximum number of attempts allowed.
-            //
-            if (attempts <= maximumAttempts)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return validResponse;
         }
 
         /// <summary>
-        /// get a valid integer from the player - note: if max and min values are both 0, range validation is disabled
+        /// get a valid double from the user
+        /// </summary>
+        /// <param name="prompt">prompt message in console</param>
+        /// <param name="validDouble">out value</param>
+        /// <returns></returns>
+        private static bool GetIsValidDouble(string prompt, int maximumAttempts, out double validDouble)
+        {
+            bool validResponse = false;
+            int attempts = 0;
+
+            do
+            {
+                Console.Write(prompt);
+
+                if (double.TryParse(Console.ReadLine(), out validDouble))
+                {
+                    validResponse = true;
+                }
+                else
+                {
+                    Console.WriteLine($"\tYou must enter an double value. Please try again.");
+                    Console.WriteLine();
+                }
+
+                attempts++;
+
+            } while (!validResponse && attempts < maximumAttempts);
+
+            Console.CursorVisible = false;
+
+            return validResponse;
+        }
+
+        /// <summary>
+        /// get a valid double from the user within a specified range
         /// </summary>
         /// <param name="prompt">prompt message in console</param>
         /// <param name="minimumValue">min. value</param>
         /// <param name="maximumValue">max. value</param>
         /// <param name="validDouble">out value</param>
         /// <returns></returns>
-        private static bool GetValidDouble(string prompt, int minimumValue, int maximumValue, int maximumAttempts, out double validDouble)
+        private static bool GetIsValidDouble(string prompt, double minimumValue, double maximumValue, int maximumAttempts, out double validDouble)
         {
             bool validResponse = false;
-            int attempts = 1;
-            validDouble = 0;
+            int attempts = 0;
 
-            //
-            // validate on range if either minimumValue and maximumValue are not 0
-            //
-            bool validateRange = (minimumValue != 0 || maximumValue != 0);
-
-            Console.Write(prompt);
-            while (!validResponse && attempts <= maximumAttempts)
+            do
             {
+                Console.Write(prompt);
+
                 if (double.TryParse(Console.ReadLine(), out validDouble))
                 {
-                    if (validateRange)
+                    if (validDouble >= minimumValue && validDouble <= maximumValue)
                     {
-                        if (validDouble >= minimumValue && validDouble <= maximumValue)
-                        {
-                            validResponse = true;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"\tYou must enter an numeric value between {minimumValue} and {maximumValue}. Please try again.");
-                            Console.WriteLine();
-                            Console.Write(prompt);
-                        }
+                        validResponse = true;
                     }
                     else
                     {
-                        validResponse = true;
+                        Console.WriteLine($"\tYou must enter a double value between {minimumValue} and {maximumValue}. Please try again.");
+                        Console.WriteLine();
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"\tYou must enter an numeric value. Please try again.");
+                    Console.WriteLine($"\tYou must enter an double value. Please try again.");
                     Console.WriteLine();
-                    Console.Write(prompt);
                 }
+
                 attempts++;
-            }
+
+            } while (!validResponse && attempts < maximumAttempts);
 
             Console.CursorVisible = false;
 
-            //
-            // check to see if user exceeded the maximum number of attempts allowed.
-            //
-            if (attempts <= maximumAttempts)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return validResponse;
         }
 
         #endregion
