@@ -21,6 +21,7 @@ namespace Demo_Classes
             nice
         }
 
+        
         #endregion
 
         #region FIELDS
@@ -30,7 +31,7 @@ namespace Demo_Classes
         private Attitude _mood;
         private bool _isAlive;
         private List<(string item, int quantity)> _inventory;
-
+        private Dictionary<TreasureType, int> _treasureChest;
 
         #endregion
 
@@ -66,32 +67,70 @@ namespace Demo_Classes
             set { _inventory = value; }
         }
 
+        public Dictionary<TreasureType, int> TreasureChest
+        {
+            get { return _treasureChest; }
+            set { _treasureChest = value; }
+        }
+
+
         #endregion
 
         #region CONSTRUCTORS
 
         public Monster()
         {
-
+            //
+            // instantiate (create) a list for the Monster object's inventory
+            //
+            _inventory = new List<(string item, int quantity)>();
         }
 
-        public Monster(string name, int age, Attitude mood, bool isActive)
+        public Monster(string name, int age, Attitude mood, bool isAlive)
         {
             _name = name;
             _age = age;
             _mood = mood;
-            _isAlive = isActive;
+            _isAlive = isAlive;
+
+            //
+            // instantiate (create) a list for the Monster object's inventory
+            //
+            _inventory = new List<(string item, int quantity)>();
+        }
+
+        /// <summary>
+        /// initialize the dictionary for the treasure chest with treasure types as the key and zero as the quantity value
+        /// </summary>
+        private void InitializeTreasureChest()
+        {
+            _treasureChest = new Dictionary<TreasureType, int>();
+
+            _treasureChest.Add(TreasureType.gold, 0);
+            _treasureChest.Add(TreasureType.silver, 0);
+            _treasureChest.Add(TreasureType.bronze, 0);
+            _treasureChest.Add(TreasureType.diamond, 0);
+            _treasureChest.Add(TreasureType.ruby, 0);
+            _treasureChest.Add(TreasureType.emerald, 0);
         }
 
         #endregion
 
         #region METHODS
 
+        /// <summary>
+        /// returns a string for the Monster object's greeting
+        /// </summary>
+        /// <returns>greeting string</returns>
         public string Greeting()
         {
             return $"Hello, my name is {_name}";
         }
 
+        /// <summary>
+        /// returns a string comment about how the Monster object is feeling
+        /// </summary>
+        /// <returns>comment string</returns>
         public string TalkTo()
         {
             if (_isAlive)
@@ -119,10 +158,14 @@ namespace Demo_Classes
             }
             else
             {
-                return $"It appears that {} is now dead and unable to respond.";
+                return $"It appears that {_name} is now dead and unable to respond.";
             }
         }
-
+        
+        /// <summary>
+        /// randomly, changes and returns a new mood
+        /// </summary>
+        /// <returns>new mood</returns>
         public Attitude NewMood()
         {
             int moodQuotient = randomNumbers.Next(1, 101);

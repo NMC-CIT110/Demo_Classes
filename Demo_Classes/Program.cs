@@ -16,12 +16,51 @@ namespace Demo_Classes
     // Last Modified: 
     //
     // **************************************************
+    
+    //
+    // notice that the index values are set explicitly
+    // these values will represent the value of each TreasureType
+    //
+    public enum TreasureType
+    {
+        gold = 50,
+        silver = 25,
+        bronze = 10,
+        diamond = 100,
+        ruby = 75,
+        emerald = 50
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
 
             DisplayContinuePrompt();
+        }
+
+        static Monster InitializeSid()
+        {
+            //
+            // instantiate (create) a Monster object named "sid" using the constructor with parameters
+            //
+            Monster sid = new Monster("Sid", 145, Monster.Attitude.nice, true);
+
+            //
+            // add items and quantities to the Monster object's Inventory property
+            //
+            sid.Inventory.Add(("Apples", 12));
+            sid.Inventory.Add(("Swords", 2));
+            sid.Inventory.Add(("Dogs", 1));
+
+            //
+            // add treasure to the Monster object's treasure chest
+            //
+            sid.TreasureChest[TreasureType.gold] = 2;
+            sid.TreasureChest[TreasureType.silver] = 5;
+            sid.TreasureChest[TreasureType.emerald] = 11;
+
+            return sid;
         }
 
         #region USER INTERFACE
