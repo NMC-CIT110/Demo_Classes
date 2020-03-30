@@ -6,31 +6,22 @@ using System.Threading.Tasks;
 
 namespace Demo_Classes
 {
+    // **************************************************
+    //
+    // Title: Demo - Classes
+    // Description: Demonstration of implementing simple classes
+    // Application Type: Console
+    // Author: Velis, John
+    // Dated Created: 3/28/2020
+    // Last Modified: 
+    //
+    // **************************************************
     class Program
     {
         static void Main(string[] args)
         {
 
-
-            if (!GetIsValidInteger("Integer: ", 3, out int myInteger))
-            {
-                Console.WriteLine("Attempts Exceeded");
-            }
-            else
-            {
-                Console.WriteLine($"Valid Integer: {myInteger}");
-            }
-
-            if (!GetIsValidDouble("Double: ", 3, out double myDouble))
-            {
-                Console.WriteLine("Attempts Exceeded");
-            }
-            else
-            {
-                Console.WriteLine($"Valid Double: {myDouble}");
-            }
-
-            Console.ReadKey();
+            DisplayContinuePrompt();
         }
 
         #region USER INTERFACE
