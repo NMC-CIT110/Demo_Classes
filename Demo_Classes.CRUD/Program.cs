@@ -34,44 +34,170 @@ namespace Demo_Classes
 
     class Program
     {
+        const string TAB = "\t";
+
         static void Main(string[] args)
         {
-            Monster sid;
-            sid = InitializeSid();
+            List<Monster> monsters = InitializeMonsterList();
 
             SetTheme(ConsoleColor.White, ConsoleColor.DarkBlue);
 
             DisplayWelcomeScreen();
-            DisplayMonsterDetail(sid);
+            DisplayMainMenu(monsters);
             DisplayClosingScreen();
+        }
+
+        static void DisplayMonsterDetail(List<Monster> monsters)
+        {
+            DisplayScreenHeader("Monster Detail");
+
+            //
+            // get monster to display
+            //
+            int id = GetValidMonsterId(monsters);
+            Monster monster = monsters.FirstOrDefault(m => m.Id == id);
+
+            if (monster != null)
+            {
+                MonsterDetail(monster);
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine(TAB + "Unable to locate the monster.");
+            }
+
+            DisplayMenuPrompt("Main");
+        }
+
+        static int GetValidMonsterId(List<Monster> monsters)
+        {
+            bool validId = false;
+            int id;
+
+            //
+            // generate a list of valid Monster object ids
+            //
+            List<int> validIdNumbers = monsters.Select(m => m.Id).ToList();
+
+            do
+            {
+                DisplayScreenHeader("Choose Monster");
+
+                Console.WriteLine(TAB + "Choose a monster by entering the Id below.");
+                MonsterListTable(monsters);
+                GetIsValidInteger(TAB + "Enter monster id:", 3, out id); // not implementing maximum attempts
+
+                if (validIdNumbers.Contains(id))
+                {
+                    validId = true;
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(TAB + $"{id} is not a valid monster Id.");
+                    Console.WriteLine(TAB + "PLease try again.");
+                    DisplayContinuePrompt();
+                }
+
+            } while (!validId);
+
+            return id;
+        }
+
+        static void DisplayMonsterList(List<Monster> monsters)
+        {
+            DisplayScreenHeader("Monster List");
+
+            MonsterListTable(monsters);
+
+            DisplayMenuPrompt("Main");
+        }
+
+        /// <summary>
+        /// generate a table of monsters
+        /// </summary>
+        /// <param name="monsters">list of monsters</param>
+        static void MonsterListTable(List<Monster> monsters)
+        {
+            Console.WriteLine(
+                TAB +
+                "Id".PadRight(10) +
+                "Name".PadRight(20) +
+                "Alive".PadRight(10));
+            Console.WriteLine(
+                TAB +
+                "----".PadRight(10) +
+                "--------".PadRight(20) +
+                "--------".PadRight(10));
+
+            foreach (Monster monster in monsters)
+            {
+                Console.WriteLine(
+                    TAB +
+                    monster.Id.ToString().PadRight(10) +
+                    monster.Name.PadRight(20) +
+                    (monster.IsAlive ? "Yes" : "No").PadRight(10));
+            }
         }
 
         /// <summary>
         /// initialize a Monster object and set the properties
         /// </summary>
         /// <returns>a Monster object with all properties set</returns>
-        static Monster InitializeSid()
+        static List<Monster> InitializeMonsterList()
         {
             //
-            // instantiate (create) a Monster object named "sid" using the constructor with parameters
+            // use a list initializer for the Monster list
+            // use a list initializer in each Monster object's inventory.
+            // use a dictionary initializer in each Monster object's treasure chest
             //
-            Monster sid = new Monster(1001,"Sid", 145, Monster.Attitude.nice, true);
+            List<Monster> monsters = new List<Monster>()
+            {
+                new Monster()
+                {
+                    Id = 1001,
+                    Name = "Sid",
+                    IsAlive = true,
+                    Age = 145,
+                    Mood = Monster.Attitude.happy,
+                    Inventory = new List<(string itemName, int quantity)>()
+                    {
+                        ("bread", 2),
+                        ("sword", 3),
+                        ("potion", 1)
+                    },
+                    TreasureChest = new Dictionary<TreasureType, int>()
+                    {
+                        {TreasureType.gold, 4},
+                        {TreasureType.silver, 12},
+                        {TreasureType.diamond, 1}
+                    }
+                },
 
-            //
-            // add items and quantities to the Monster object's Inventory property
-            //
-            sid.Inventory.Add(("Apples", 12));
-            sid.Inventory.Add(("Swords", 2));
-            sid.Inventory.Add(("Dogs", 1));
+                new Monster()
+                {
+                    Id = 1002,
+                    Name = "Suzy",
+                    IsAlive = true,
+                    Age = 113,
+                    Mood = Monster.Attitude.happy,
+                    Inventory = new List<(string itemName, int quantity)>()
+                    {
+                        ("rose", 2),
+                        ("knife", 3),
+                        ("potion", 3)
+                    },
+                    TreasureChest = new Dictionary<TreasureType, int>()
+                    {
+                        {TreasureType.gold, 1},
+                        {TreasureType.bronze, 42},
+                        {TreasureType.ruby, 1}
+                    }
+                },
+            };
 
-            //
-            // add treasure to the Monster object's treasure chest
-            //
-            sid.TreasureChest[TreasureType.gold] = 2;
-            sid.TreasureChest[TreasureType.silver] = 5;
-            sid.TreasureChest[TreasureType.emerald] = 11;
-
-            return sid;
+            return monsters;
         }
 
         /// <summary>
@@ -82,7 +208,7 @@ namespace Demo_Classes
         /// **********************************************************
         /// </summary>
         /// <param name="monster">Monster object</param>
-        static void DisplayMonsterDetail(Monster monster)
+        static void MonsterDetail(Monster monster)
         {
             DisplayScreenHeader($"{monster.Name}'s Information");
 
@@ -94,8 +220,6 @@ namespace Demo_Classes
             InventoryList(monster);
             Console.WriteLine();
             TreasureChestList(monster);
-
-            DisplayContinuePrompt();
         }
 
         /// <summary>
@@ -106,17 +230,17 @@ namespace Demo_Classes
         {
             Console.WriteLine("\tCurrent Inventory");
             Console.WriteLine(
-                "\t" +
+                TAB +
                 "Item Name".PadRight(20) +
                 "Quantity".PadRight(12));
             Console.WriteLine(
-                "\t" +
+                TAB +
                 "---------".PadRight(20) +
                 "--------".PadRight(12));
             foreach (var item in monster.Inventory)
             {
                 Console.WriteLine(
-                    "\t" +
+                    TAB +
                     item.itemName.PadRight(20) +
                     item.quantity.ToString().PadRight(12));
             }
@@ -133,12 +257,12 @@ namespace Demo_Classes
 
             Console.WriteLine("\tCurrent Treasure Chest Contents");
             Console.WriteLine(
-                "\t" +
+                TAB +
                 "Treasure Name".PadRight(20) +
                 "Quantity".PadRight(12) +
                 "Value".PadRight(12));
             Console.WriteLine(
-                "\t" +
+                TAB +
                 "---------".PadRight(20) +
                 "--------".PadRight(12) +
                 "--------".PadRight(12));
@@ -149,14 +273,14 @@ namespace Demo_Classes
                 totalTreasureValue += treasureItemValue;
 
                 Console.WriteLine(
-                    "\t" +
+                    TAB +
                     treasureItem.Key.ToString().PadRight(20) +
                     treasureItem.Value.ToString().PadRight(12) +
                     treasureItemValue.ToString().PadRight(12));
             }
             Console.WriteLine();
             Console.WriteLine(
-                "\t" +
+                TAB +
                 "Total ".PadLeft(32) +
                 totalTreasureValue.ToString().PadRight(12));
         }
@@ -176,6 +300,67 @@ namespace Demo_Classes
 
         /// <summary>
         /// *****************************************************************
+        /// *                          Main Menu                            *
+        /// *****************************************************************
+        /// </summary>
+        static void DisplayMainMenu(List<Monster> monsters)
+        {
+            bool quitMainMenu = false;
+            ConsoleKeyInfo menuChoiceKey;
+            char menuChoice;
+
+            do
+            {
+                DisplayScreenHeader("Main Menu");
+
+                Console.WriteLine(TAB + "a) List All Monsters");
+                Console.WriteLine(TAB + "b) Monster Detail");
+                Console.WriteLine(TAB + "c) ");
+                Console.WriteLine(TAB + "q) Quit");
+                Console.WriteLine();
+
+                Console.Write(TAB + "Menu Choice:");
+
+                Console.CursorVisible = false;
+                menuChoiceKey = Console.ReadKey();
+                menuChoice = menuChoiceKey.KeyChar;
+
+                switch (menuChoice)
+                {
+                    case 'a':
+                        DisplayMonsterList(monsters);
+                        break;
+
+                    case 'b':
+                        DisplayMonsterDetail(monsters);
+                        break;
+
+                    case 'c':
+
+                        break;
+
+                    case 'q':
+                        quitMainMenu = true;
+                        break;
+
+                    default:
+                        //
+                        // feedback message for invalid response
+                        //
+                        Console.WriteLine();
+                        Console.WriteLine(TAB + "----------------------------------------------------------------");
+                        Console.WriteLine(TAB + "  It appears your have entered and invalid menu choice.");
+                        Console.WriteLine(TAB + "  Please try again by entering the letter of your menu choice.");
+                        Console.WriteLine(TAB + "----------------------------------------------------------------");
+                        DisplayContinuePrompt();
+                        break;
+                }
+
+            } while (!quitMainMenu);
+        }
+
+        /// <summary>
+        /// *****************************************************************
         /// *                     Welcome Screen                            *
         /// *****************************************************************
         /// </summary>
@@ -185,7 +370,7 @@ namespace Demo_Classes
 
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("\t\tSimple Demonstration of Classes");
+            Console.WriteLine("\t\tDemonstration of Classes and CRUD Management");
             Console.WriteLine();
 
             DisplayContinuePrompt();
@@ -200,12 +385,11 @@ namespace Demo_Classes
         {
             Console.CursorVisible = false;
 
-            Console.Clear();
-            Console.WriteLine();
-            Console.WriteLine("\t\tEnd of Demonstration");
-            Console.WriteLine();
+            DisplayScreenHeader("End of Demonstration");
 
-            DisplayContinuePrompt();
+            Console.WriteLine();
+            Console.WriteLine(TAB + "Press any key to exit.");
+            Console.ReadKey();
         }
 
         /// <summary>
