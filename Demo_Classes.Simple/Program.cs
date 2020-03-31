@@ -16,10 +16,11 @@ namespace Demo_Classes
     // Last Modified: 
     //
     // **************************************************
-    
+
     //
     // notice that the index values are set explicitly
     // these values will represent the value of each TreasureType
+    // Note: the values must all be unique
     //
     public enum TreasureType
     {
@@ -28,17 +29,27 @@ namespace Demo_Classes
         bronze = 10,
         diamond = 100,
         ruby = 75,
-        emerald = 50
+        emerald = 60
     }
 
     class Program
     {
         static void Main(string[] args)
         {
+            Monster sid;
+            sid = InitializeSid();
 
-            DisplayContinuePrompt();
+            SetTheme(ConsoleColor.White, ConsoleColor.DarkBlue);
+
+            DisplayWelcomeScreen();
+            DisplayMonsterDetail(sid);
+            DisplayClosingScreen();
         }
 
+        /// <summary>
+        /// initialize a Monster object and set the properties
+        /// </summary>
+        /// <returns>a Monster object with all properties set</returns>
         static Monster InitializeSid()
         {
             //
@@ -63,6 +74,103 @@ namespace Demo_Classes
             return sid;
         }
 
+        /// <summary>
+        /// **********************************************************
+        /// *                                                        *
+        /// *        Display All Monster Properties Screen           *
+        /// *                                                        *
+        /// **********************************************************
+        /// </summary>
+        /// <param name="monster">Monster object</param>
+        static void DisplayMonsterDetail(Monster monster)
+        {
+            DisplayScreenHeader($"{monster.Name}'s Information");
+
+            Console.WriteLine($"\tAlive: {(monster.IsAlive ? "Yes" : "No")}");
+            Console.WriteLine($"\tAge: {monster.Age}");
+            Console.WriteLine($"\tMood: {monster.Mood}");
+            Console.WriteLine();
+            InventoryList(monster);
+            Console.WriteLine();
+            TreasureChestList(monster);
+
+            DisplayContinuePrompt();
+        }
+
+        /// <summary>
+        /// generate and display a table of the Monster object's inventory
+        /// </summary>
+        /// <param name="monster">Monster object</param>
+        static void InventoryList(Monster monster)
+        {
+            Console.WriteLine("\tCurrent Inventory");
+            Console.WriteLine(
+                "\t" +
+                "Item Name".PadRight(20) +
+                "Quantity".PadRight(12));
+            Console.WriteLine(
+                "\t" +
+                "---------".PadRight(20) +
+                "--------".PadRight(12));
+            foreach (var item in monster.Inventory)
+            {
+                Console.WriteLine(
+                    "\t" +
+                    item.itemName.PadRight(20) +
+                    item.quantity.ToString().PadRight(12));
+            }
+        }
+
+        /// <summary>
+        /// generate and display a table of the Monster object's treasure chest
+        /// </summary>
+        /// <param name="monster">Monster object</param>
+        static void TreasureChestList(Monster monster)
+        {
+            int treasureItemValue;
+            int totalTreasureValue = 0;
+
+            Console.WriteLine("\tCurrent Treasure Chest Contents");
+            Console.WriteLine(
+                "\t" +
+                "Treasure Name".PadRight(20) +
+                "Quantity".PadRight(12) +
+                "Value".PadRight(12));
+            Console.WriteLine(
+                "\t" +
+                "---------".PadRight(20) +
+                "--------".PadRight(12) +
+                "--------".PadRight(12));
+
+            foreach (var treasureItem in monster.TreasureChest)
+            {
+                treasureItemValue = TreasureItemValue(treasureItem.Key, treasureItem.Value);
+                totalTreasureValue += treasureItemValue;
+
+                Console.WriteLine(
+                    "\t" +
+                    treasureItem.Key.ToString().PadRight(20) +
+                    treasureItem.Value.ToString().PadRight(12) +
+                    treasureItemValue.ToString().PadRight(12));
+            }
+            Console.WriteLine();
+            Console.WriteLine(
+                "\t" +
+                "Total ".PadLeft(32) +
+                totalTreasureValue.ToString().PadRight(12));
+        }
+
+        /// <summary>
+        /// calculate the total value of a specific treasure item in the treasure chest
+        /// </summary>
+        /// <param name="treasureItem">treasure item</param>
+        /// <param name="quantity">quantity</param>
+        /// <returns>total value for the treasure item</returns>
+        static int TreasureItemValue(TreasureType treasureItem, int quantity)
+        {
+            return quantity * (int)treasureItem;
+        }
+
         #region USER INTERFACE
 
         /// <summary>
@@ -76,7 +184,7 @@ namespace Demo_Classes
 
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("\t\tFinch Control");
+            Console.WriteLine("\t\tSimple Demonstration of Classes");
             Console.WriteLine();
 
             DisplayContinuePrompt();
@@ -93,7 +201,7 @@ namespace Demo_Classes
 
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("\t\tThank you for using Finch Control!");
+            Console.WriteLine("\t\tEnd of Demonstration");
             Console.WriteLine();
 
             DisplayContinuePrompt();
@@ -137,6 +245,7 @@ namespace Demo_Classes
         /// <param name="foreground">foreground color</param>
         static void SetTheme(ConsoleColor background, ConsoleColor foreground)
         {
+            Console.WindowHeight = 30;
             Console.BackgroundColor = background;
             Console.ForegroundColor = foreground;
             Console.Clear();

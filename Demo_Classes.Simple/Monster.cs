@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Demo_Classes
 {
+    /// <summary>
+    /// Monster class to demonstrate methods, setting and displaying properties
+    /// </summary>
     public class Monster
     {
         Random randomNumbers = new Random();
@@ -30,7 +33,7 @@ namespace Demo_Classes
         private int _age;
         private Attitude _mood;
         private bool _isAlive;
-        private List<(string item, int quantity)> _inventory;
+        private List<(string itemName, int quantity)> _inventory;
         private Dictionary<TreasureType, int> _treasureChest;
 
         #endregion
@@ -61,7 +64,7 @@ namespace Demo_Classes
             set { _isAlive = value; }
         }
 
-        public List<(string item, int quantity)> Inventory
+        public List<(string itemName, int quantity)> Inventory
         {
             get { return _inventory; }
             set { _inventory = value; }
@@ -78,14 +81,30 @@ namespace Demo_Classes
 
         #region CONSTRUCTORS
 
+        /// <summary>
+        /// default constructor
+        /// Note: the inventory list and treasure chest dictionary are instantiated 
+        /// </summary>
         public Monster()
         {
             //
             // instantiate (create) a list for the Monster object's inventory
             //
             _inventory = new List<(string item, int quantity)>();
+
+            //
+            // instantiate (create) a dictionary for the Monster object's treasure chest and set all values to zero
+            //
+            InitializeTreasureChest();
         }
 
+        /// <summary>
+        /// construct with parameters to set Monster object's properties
+        /// </summary>
+        /// <param name="name">name</param>
+        /// <param name="age">age</param>
+        /// <param name="mood">mood</param>
+        /// <param name="isAlive">is monster alive</param>
         public Monster(string name, int age, Attitude mood, bool isAlive)
         {
             _name = name;
@@ -97,6 +116,11 @@ namespace Demo_Classes
             // instantiate (create) a list for the Monster object's inventory
             //
             _inventory = new List<(string item, int quantity)>();
+
+            //
+            // instantiate (create) a dictionary for the Monster object's treasure chest and set all values to zero
+            //
+            InitializeTreasureChest();
         }
 
         /// <summary>
