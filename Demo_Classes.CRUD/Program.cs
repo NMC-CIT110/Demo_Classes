@@ -47,6 +47,40 @@ namespace Demo_Classes
             DisplayClosingScreen();
         }
 
+        static void DisplayDeleteMonster(List<Monster> monsters)
+        {
+            DisplayScreenHeader("Delete Monster");
+
+            //
+            // get monster to delete
+            //
+            int id = GetValidMonsterId(monsters);
+            Monster monster = monsters.FirstOrDefault(m => m.Id == id);
+
+            if (monster != null)
+            {
+                Console.WriteLine();
+                Console.Write(TAB + $"Are you sure you want to delete the monster named {monster.Name}?");
+                if (Console.ReadLine().ToLower() == "yes")
+                {
+                    monsters.Remove(monster);
+                    Console.WriteLine();
+                    Console.WriteLine(TAB + $"{monster.Name} has been deleted.");
+                }
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine(TAB + "Unable to locate the monster.");
+            }
+
+            DisplayMenuPrompt("Main");
+        }
+
+        /// <summary>
+        /// ***** SCREEN: Monster Detail *****
+        /// </summary>
+        /// <param name="monsters">list of monsters</param>
         static void DisplayMonsterDetail(List<Monster> monsters)
         {
             DisplayScreenHeader("Monster Detail");
@@ -70,6 +104,11 @@ namespace Demo_Classes
             DisplayMenuPrompt("Main");
         }
 
+        /// <summary>
+        /// get a valid monster id from the user
+        /// </summary>
+        /// <param name="monsters">list of monsters</param>
+        /// <returns>monster id</returns>
         static int GetValidMonsterId(List<Monster> monsters)
         {
             bool validId = false;
@@ -105,6 +144,10 @@ namespace Demo_Classes
             return id;
         }
 
+        /// <summary>
+        /// display a list of monsters
+        /// </summary>
+        /// <param name="monsters">list of monsters</param>
         static void DisplayMonsterList(List<Monster> monsters)
         {
             DisplayScreenHeader("Monster List");
@@ -201,11 +244,7 @@ namespace Demo_Classes
         }
 
         /// <summary>
-        /// **********************************************************
-        /// *                                                        *
-        /// *        Display All Monster Properties Screen           *
-        /// *                                                        *
-        /// **********************************************************
+        /// display a block of monster details
         /// </summary>
         /// <param name="monster">Monster object</param>
         static void MonsterDetail(Monster monster)
@@ -299,9 +338,7 @@ namespace Demo_Classes
         #region USER INTERFACE
 
         /// <summary>
-        /// *****************************************************************
-        /// *                          Main Menu                            *
-        /// *****************************************************************
+        /// ***** SCREEN: Main Menu *****
         /// </summary>
         static void DisplayMainMenu(List<Monster> monsters)
         {
@@ -315,7 +352,9 @@ namespace Demo_Classes
 
                 Console.WriteLine(TAB + "a) List All Monsters");
                 Console.WriteLine(TAB + "b) Monster Detail");
-                Console.WriteLine(TAB + "c) ");
+                Console.WriteLine(TAB + "c) Add Monster");
+                Console.WriteLine(TAB + "d) Update Monster");
+                Console.WriteLine(TAB + "e) Delete Monster");
                 Console.WriteLine(TAB + "q) Quit");
                 Console.WriteLine();
 
@@ -339,6 +378,14 @@ namespace Demo_Classes
 
                         break;
 
+                    case 'd':
+
+                        break;
+
+                    case 'e':
+                        DisplayDeleteMonster(monsters);
+                        break;
+
                     case 'q':
                         quitMainMenu = true;
                         break;
@@ -360,9 +407,7 @@ namespace Demo_Classes
         }
 
         /// <summary>
-        /// *****************************************************************
-        /// *                     Welcome Screen                            *
-        /// *****************************************************************
+        /// ***** SCREEN: Welcome *****
         /// </summary>
         static void DisplayWelcomeScreen()
         {
@@ -377,9 +422,7 @@ namespace Demo_Classes
         }
 
         /// <summary>
-        /// *****************************************************************
-        /// *                     Closing Screen                            *
-        /// *****************************************************************
+        /// ***** SCREEN: Closing *****
         /// </summary>
         static void DisplayClosingScreen()
         {
