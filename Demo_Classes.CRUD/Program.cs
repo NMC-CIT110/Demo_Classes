@@ -134,7 +134,7 @@ namespace Demo_Classes
                         Console.WriteLine(TAB + "You must enter either \"yes\" or \"no\".");
                         Console.WriteLine(TAB + "Please try again.");
                         Console.WriteLine();
-                        GetIsValidYesNo($"Alive: {(monster.IsAlive ? "Yes" : "No")} >", 3, out bool alive);
+                        GetIsValidYesNoBool($"Alive: {(monster.IsAlive ? "Yes" : "No")} >", 3, out bool alive);
                         monster.IsAlive = alive;
                     }
                     else
@@ -288,8 +288,8 @@ namespace Demo_Classes
             if (monster != null)
             {
                 Console.WriteLine();
-                Console.Write(TAB + $"Are you sure you want to delete the monster named {monster.Name}?");
-                if (Console.ReadLine().ToLower() == "yes")
+                GetIsValidYesNo($"Are you sure you want to delete the monster named {monster.Name}?", 3, out string yesNoChoice);
+                if (yesNoChoice == "yes")
                 {
                     monsters.Remove(monster);
                     Console.WriteLine();
@@ -727,13 +727,45 @@ namespace Demo_Classes
         /// </summary>
         /// <param name="prompt">prompt message</param>
         /// <returns>true if valid response</returns>
-        private static bool GetIsValidYesNo(string prompt, int maximumAttempts, out bool yesNoChoice)
+        private static bool GetIsValidYesNo(string prompt, int maximumAttempts, out string yesNoChoice)
+        {
+            bool validResponse = false;
+            int attempts = 0;
+
+            do
+            {
+                Console.Write(TAB + prompt + " [yes/no]:");
+                yesNoChoice = Console.ReadLine().ToLower();
+
+                if (yesNoChoice == "yes" || yesNoChoice == "no")
+                {
+                    validResponse = true;
+                }
+                else
+                {
+                    Console.WriteLine(TAB + $"You must enter either \"yes\" or \"no\". Please try again.");
+                    Console.WriteLine();
+                }
+
+                attempts++;
+
+            } while (!validResponse && attempts < maximumAttempts);
+
+            return validResponse;
+        }
+
+        /// <summary>
+        /// prompt the user and get a yes/no response and translates the response as a bool
+        /// </summary>
+        /// <param name="prompt">prompt message</param>
+        /// <returns>true if valid response</returns>
+        private static bool GetIsValidYesNoBool(string prompt, int maximumAttempts, out bool yesNoBoolChoice)
         {
             bool validResponse = false;
             string userResponse;
             int attempts = 0;
 
-            yesNoChoice = false;
+            yesNoBoolChoice = false;
 
             do
             {
@@ -742,7 +774,7 @@ namespace Demo_Classes
 
                 if (userResponse == "yes" || userResponse == "no")
                 {
-                    yesNoChoice = userResponse == "yes" ? true : false;
+                    yesNoBoolChoice = userResponse == "yes" ? true : false;
                     validResponse = true;
                 }
                 else
