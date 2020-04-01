@@ -35,6 +35,7 @@ namespace Demo_Classes
     class Program
     {
         const string TAB = "\t";
+        const string NEW_LINE = "\n";
 
         static void Main(string[] args)
         {
@@ -48,6 +49,115 @@ namespace Demo_Classes
         }
 
         /// <summary>
+        /// update monster
+        /// </summary>
+        /// <param name="monsters">list of monsters</param>
+        static void DisplayUpdateMonster(List<Monster> monsters)
+        {
+            string userResponse;
+
+            DisplayScreenHeader("Update Monster");
+
+            //
+            // get monster to update
+            //
+            int id = GetValidMonsterId(monsters);
+            Monster monster = monsters.FirstOrDefault(m => m.Id == id);
+
+            if (monster != null)
+            {
+                Console.WriteLine();
+                //
+                // Note: Id property must not be updated
+                //
+
+                //
+                // ***** Name *****
+                //
+                Console.Write(TAB + $"Name: {monster.Name} >");
+                userResponse = Console.ReadLine();
+                if (userResponse != "") monster.Name = userResponse;
+
+                //
+                // ***** Age *****
+                //
+                Console.Write(TAB + $"Age: {monster.Age} >");
+                userResponse = Console.ReadLine();
+                if (userResponse != "")
+                {
+                    if (!int.TryParse(userResponse, out int age))
+                    {
+                        Console.WriteLine(TAB + "You must enter an integer value between 0 and 1000.");
+                        Console.WriteLine(TAB + "Please try again.");
+                        Console.WriteLine();
+                        GetIsValidInteger(TAB + $"Age: {monster.Age} >", 0, 1000, 3, out age);
+                    }
+                    monster.Age = age;
+                }
+
+                //
+                // ***** Mood *****
+                //
+                //
+                // list all valid moods
+                //
+                foreach (Monster.Attitude mood in Enum.GetValues(typeof(Monster.Attitude)))
+                {
+                    if (mood != Monster.Attitude.none)
+                    {
+                        Console.Write(TAB + mood);
+                    }
+                }
+                Console.Write(NEW_LINE + TAB + $"Mood: {monster.Mood} >");
+                userResponse = Console.ReadLine();
+                if (userResponse != "")
+                {
+                    if (!Enum.TryParse(userResponse, out Monster.Attitude mood))
+                    {
+                        Console.WriteLine(TAB + "You must enter an integer value between 0 and 1000.");
+                        Console.WriteLine(TAB + "Please try again.");
+                        Console.WriteLine();
+                        GetIsValidEnum<Monster.Attitude>(TAB + $"Mood: {monster.Mood} >", 3, out mood);
+                    }
+                    monster.Mood = mood;
+                }
+
+                //
+                // ***** Alive *****
+                //
+                Console.Write(TAB + $"Alive: {(monster.IsAlive ? "Yes" : "No")} >");
+                userResponse = Console.ReadLine().ToLower();
+                if (userResponse != "")
+                {
+                    if (!(userResponse == "yes" || userResponse == "no"))
+                    {
+                        Console.WriteLine(TAB + "You must enter either \"yes\" or \"no\".");
+                        Console.WriteLine(TAB + "Please try again.");
+                        Console.WriteLine();
+                        GetIsValidYesNo($"Alive: {(monster.IsAlive ? "Yes" : "No")} >", 3, out bool alive);
+                        monster.IsAlive = alive;
+                    }
+                    else
+                    {
+                        monster.IsAlive = userResponse == "yes" ? true : false;
+                    }
+                }
+
+                //
+                // ***** Inventory *****
+                //
+                Console.WriteLine(TAB + "Updating the inventory will be available in a later version."); //TODO Add 
+
+                //
+                // ***** Treasure Chest *****
+                //
+                DisplayUpdateTreasureChest(monster);
+
+                DisplayContinuePrompt();
+            }
+        }
+
+        /// <summary>
         /// add new monster and set properties
         /// </summary>
         /// <param name="monsters">list of monsters</param>
@@ -56,6 +166,9 @@ namespace Demo_Classes
             Monster monster = new Monster();
 
             DisplayScreenHeader("Add Monster");
+
+            Console.WriteLine(TAB + "Enter all of the properties for the new monster.");
+            DisplayContinuePrompt();
 
             Console.Write(TAB + "Name: ");
             monster.Name = Console.ReadLine();
@@ -71,7 +184,15 @@ namespace Demo_Classes
             DisplayScreenHeader("Add Monster");
             DisplayUpdateTreasureChest(monster);
 
+            //
+            // get next id number and set the new monster's id
+            //
+            monster.Id = monsters.Max(m => m.Id) + 1;
+
             monsters.Add(monster);
+
+            DisplayScreenHeader("Add Monster");
+            Console.WriteLine(TAB + $"{monster.Name} has been added to the list of monsters.");
 
             DisplayMenuPrompt("Main");
         }
@@ -115,8 +236,6 @@ namespace Demo_Classes
 
             Console.WriteLine();
             TreasureChestList(monster);
-
-            DisplayContinuePrompt();
         }
 
         /// <summary>
@@ -321,9 +440,12 @@ namespace Demo_Classes
                     },
                     TreasureChest = new Dictionary<TreasureType, int>()
                     {
-                        {TreasureType.gold, 4},
-                        {TreasureType.silver, 12},
-                        {TreasureType.diamond, 1}
+                        {TreasureType.gold, 10},
+                        {TreasureType.silver, 0},
+                        {TreasureType.bronze, 4},
+                        {TreasureType.diamond, 10},
+                        {TreasureType.ruby, 0},
+                        {TreasureType.emerald, 1}
                     }
                 },
 
@@ -343,8 +465,11 @@ namespace Demo_Classes
                     TreasureChest = new Dictionary<TreasureType, int>()
                     {
                         {TreasureType.gold, 1},
+                        {TreasureType.silver, 0},
                         {TreasureType.bronze, 42},
-                        {TreasureType.ruby, 1}
+                        {TreasureType.diamond, 1},
+                        {TreasureType.ruby, 0},
+                        {TreasureType.emerald, 1}
                     }
                 },
             };
@@ -487,7 +612,7 @@ namespace Demo_Classes
                         break;
 
                     case 'd':
-
+                        DisplayUpdateMonster(monsters);
                         break;
 
                     case 'e':
@@ -550,9 +675,11 @@ namespace Demo_Classes
         /// </summary>
         static void DisplayContinuePrompt()
         {
+            Console.CursorVisible = false;
             Console.WriteLine();
             Console.WriteLine("\tPress any key to continue.");
             Console.ReadKey();
+            Console.CursorVisible = true;
         }
 
         /// <summary>
@@ -560,9 +687,11 @@ namespace Demo_Classes
         /// </summary>
         static void DisplayMenuPrompt(string menuName)
         {
+            Console.CursorVisible = false;
             Console.WriteLine();
-            Console.WriteLine($"\tPress any key to return to the {menuName} Menu.");
+            Console.WriteLine(TAB + $"Press any key to return to the {menuName} Menu.");
             Console.ReadKey();
+            Console.CursorVisible = true;
         }
 
         /// <summary>
@@ -572,7 +701,7 @@ namespace Demo_Classes
         {
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("\t\t" + headerText);
+            Console.WriteLine(TAB + TAB + headerText);
             Console.WriteLine();
         }
 
@@ -593,6 +722,50 @@ namespace Demo_Classes
 
         #region HELPER METHODS
 
+        /// <summary>
+        /// prompt the user and get a yes/no response
+        /// </summary>
+        /// <param name="prompt">prompt message</param>
+        /// <returns>true if valid response</returns>
+        private static bool GetIsValidYesNo(string prompt, int maximumAttempts, out bool yesNoChoice)
+        {
+            bool validResponse = false;
+            string userResponse;
+            int attempts = 0;
+
+            yesNoChoice = false;
+
+            do
+            {
+                Console.Write(TAB + prompt + " [yes/no]:");
+                userResponse = Console.ReadLine().ToLower();
+
+                if (userResponse == "yes" || userResponse == "no")
+                {
+                    yesNoChoice = userResponse == "yes" ? true : false;
+                    validResponse = true;
+                }
+                else
+                {
+                    Console.WriteLine(TAB + $"You must enter either \"yes\" or \"no\". Please try again.");
+                    Console.WriteLine();
+                }
+
+                attempts++;
+
+            } while (!validResponse && attempts < maximumAttempts);
+
+            return validResponse;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="prompt">prompt message</param>
+        /// <param name="maximumAttempts"></param>
+        /// <param name="validEnum"></param>
+        /// <returns></returns>
         private static bool GetIsValidEnum<TEnum>(string prompt, int maximumAttempts, out TEnum validEnum) where TEnum : struct
         {
             bool validResponse = false;
@@ -608,7 +781,7 @@ namespace Demo_Classes
                 }
                 else
                 {
-                    Console.WriteLine($"\tYou must enter a {nameof(TEnum)} value. Please try again.");
+                    Console.WriteLine(TAB + $"You must enter a {nameof(TEnum)} value. Please try again.");
                     Console.WriteLine();
                 }
 
@@ -640,7 +813,7 @@ namespace Demo_Classes
                 }
                 else
                 {
-                    Console.WriteLine($"\tYou must enter an integer value. Please try again.");
+                    Console.WriteLine(TAB + $"You must enter an integer value. Please try again.");
                     Console.WriteLine();
                 }
 
@@ -676,7 +849,7 @@ namespace Demo_Classes
                     }
                     else
                     {
-                        Console.WriteLine($"\tYou must enter an integer value between {minimumValue} and {maximumValue}. Please try again.");
+                        Console.WriteLine(TAB + $"You must enter an integer value between {minimumValue} and {maximumValue}. Please try again.");
                         Console.WriteLine();
                     }
                 }
@@ -714,7 +887,7 @@ namespace Demo_Classes
                 }
                 else
                 {
-                    Console.WriteLine($"\tYou must enter an double value. Please try again.");
+                    Console.WriteLine(TAB + $"You must enter an double value. Please try again.");
                     Console.WriteLine();
                 }
 
@@ -750,13 +923,13 @@ namespace Demo_Classes
                     }
                     else
                     {
-                        Console.WriteLine($"\tYou must enter a double value between {minimumValue} and {maximumValue}. Please try again.");
+                        Console.WriteLine(TAB + $"You must enter a double value between {minimumValue} and {maximumValue}. Please try again.");
                         Console.WriteLine();
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"\tYou must enter an double value. Please try again.");
+                    Console.WriteLine(TAB + $"You must enter an double value. Please try again.");
                     Console.WriteLine();
                 }
 
