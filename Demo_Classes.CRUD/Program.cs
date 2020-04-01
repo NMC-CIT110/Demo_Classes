@@ -47,6 +47,115 @@ namespace Demo_Classes
             DisplayClosingScreen();
         }
 
+        /// <summary>
+        /// add new monster and set properties
+        /// </summary>
+        /// <param name="monsters">list of monsters</param>
+        static void DisplayAddMonster(List<Monster> monsters)
+        {
+            Monster monster = new Monster();
+
+            DisplayScreenHeader("Add Monster");
+
+            Console.Write(TAB + "Name: ");
+            monster.Name = Console.ReadLine();
+            GetIsValidInteger(TAB + "Age: ", 1, 1000, 3, out int age);
+            monster.Age = age;
+            GetIsValidEnum<Monster.Attitude>(TAB + "Mood [happy, sad, angry, nice]: ", 3, out Monster.Attitude mood);
+            monster.Mood = mood;
+            monster.IsAlive = true; // all monsters are created alive
+
+            DisplayScreenHeader("Add Monster");
+            DisplayAddInventoryItems(monster);
+
+            DisplayScreenHeader("Add Monster");
+            DisplayUpdateTreasureChest(monster);
+
+            monsters.Add(monster);
+
+            DisplayMenuPrompt("Main");
+        }
+
+        /// <summary>
+        /// update treasure chest quantities
+        /// </summary>
+        /// <param name="monster">monster</param>
+        static void DisplayUpdateTreasureChest(Monster monster)
+        {
+            string userResponse;
+            int quantity;
+
+            DisplayScreenHeader("Update Treasure Chest");
+
+            Console.WriteLine(TAB + "To keep the current quantity, just type Enter.");
+            Console.WriteLine();
+
+            //
+            // cannot iterate through a dictionary and change values
+            // therefore, create a list of TreasureChest keys to iterate through
+            //
+            List<TreasureType> treasureTypesKeys = new List<TreasureType>(monster.TreasureChest.Keys);
+
+            foreach (TreasureType treasureTypeKey in treasureTypesKeys)
+            {
+                Console.Write(TAB + $"{treasureTypeKey}: {monster.TreasureChest[treasureTypeKey]} >");
+                userResponse = Console.ReadLine();
+                if (userResponse != "")
+                {
+                    if (!int.TryParse(userResponse, out quantity))
+                    {
+                        Console.WriteLine(TAB + "You must enter an integer value between 0 and 1000.");
+                        Console.WriteLine(TAB + "Please try again.");
+                        Console.WriteLine();
+                        GetIsValidInteger(TAB + $"{treasureTypeKey}: {monster.TreasureChest[treasureTypeKey]} >", 0, 1000, 3, out quantity);
+                    }
+                    monster.TreasureChest[treasureTypeKey] = quantity;
+                }
+            }
+
+            Console.WriteLine();
+            TreasureChestList(monster);
+
+            DisplayContinuePrompt();
+        }
+
+        /// <summary>
+        /// add items to the monster's inventory
+        /// </summary>
+        /// <param name="monster">monster</param>
+        static void DisplayAddInventoryItems(Monster monster)
+        {
+            string name;
+            int quantity;
+
+            DisplayScreenHeader("Add Inventory Items");
+
+            Console.WriteLine(TAB + "Enter the name of the new inventory item and then the quantity.");
+            Console.WriteLine(TAB + "To stop adding items, enter \"done\" for the name.");
+            Console.WriteLine();
+
+            do
+            {
+                Console.Write(TAB + "Item name: ");
+                name = Console.ReadLine();
+                if (name.ToLower() == "done") break;
+                GetIsValidInteger(TAB + "Item quantity: ", 1, 1000, 3, out quantity); // not checking for maximum attempts
+                monster.Inventory.Add((name, quantity));
+                Console.WriteLine();
+            } while (true); // continue looping until the break command is executed
+
+            Console.WriteLine();
+            Console.WriteLine(TAB + $"You have added {monster.Inventory.Count} items to the monster's inventory.");
+            Console.WriteLine();
+            InventoryList(monster);
+
+            DisplayContinuePrompt();
+        }
+
+        /// <summary>
+        /// delete a monster
+        /// </summary>
+        /// <param name="monsters">list of monsters</param>
         static void DisplayDeleteMonster(List<Monster> monsters)
         {
             DisplayScreenHeader("Delete Monster");
@@ -360,7 +469,6 @@ namespace Demo_Classes
 
                 Console.Write(TAB + "Menu Choice:");
 
-                Console.CursorVisible = false;
                 menuChoiceKey = Console.ReadKey();
                 menuChoice = menuChoiceKey.KeyChar;
 
@@ -375,7 +483,7 @@ namespace Demo_Classes
                         break;
 
                     case 'c':
-
+                        DisplayAddMonster(monsters);
                         break;
 
                     case 'd':
@@ -419,6 +527,8 @@ namespace Demo_Classes
             Console.WriteLine();
 
             DisplayContinuePrompt();
+
+            Console.CursorVisible = true;
         }
 
         /// <summary>
@@ -483,6 +593,32 @@ namespace Demo_Classes
 
         #region HELPER METHODS
 
+        private static bool GetIsValidEnum<TEnum>(string prompt, int maximumAttempts, out TEnum validEnum) where TEnum : struct
+        {
+            bool validResponse = false;
+            int attempts = 0;
+
+            do
+            {
+                Console.Write(prompt);
+
+                if (Enum.TryParse<TEnum>(Console.ReadLine(), true, out validEnum))
+                {
+                    validResponse = true;
+                }
+                else
+                {
+                    Console.WriteLine($"\tYou must enter a {nameof(TEnum)} value. Please try again.");
+                    Console.WriteLine();
+                }
+
+                attempts++;
+
+            } while (!validResponse && attempts < maximumAttempts);
+
+            return validResponse;
+        }
+
         /// <summary>
         /// get a valid integer from the user
         /// </summary>
@@ -511,8 +647,6 @@ namespace Demo_Classes
                 attempts++;
 
             } while (!validResponse && attempts < maximumAttempts);
-
-            Console.CursorVisible = false;
 
             return validResponse;
         }
@@ -556,8 +690,6 @@ namespace Demo_Classes
 
             } while (!validResponse && attempts < maximumAttempts);
 
-            Console.CursorVisible = false;
-
             return validResponse;
         }
 
@@ -589,8 +721,6 @@ namespace Demo_Classes
                 attempts++;
 
             } while (!validResponse && attempts < maximumAttempts);
-
-            Console.CursorVisible = false;
 
             return validResponse;
         }
@@ -633,8 +763,6 @@ namespace Demo_Classes
                 attempts++;
 
             } while (!validResponse && attempts < maximumAttempts);
-
-            Console.CursorVisible = false;
 
             return validResponse;
         }
