@@ -34,6 +34,7 @@ namespace Demo_Classes
         private int _age;
         private Attitude _mood;
         private bool _isAlive;
+        private List<string> _children;
         private List<(string itemName, int quantity)> _inventory;
         private Dictionary<TreasureType, int> _treasureChest;
 
@@ -70,6 +71,11 @@ namespace Demo_Classes
             get { return _isAlive; }
             set { _isAlive = value; }
         }
+        public List<string> Children
+        {
+            get { return _children; }
+            set { _children = value; }
+        }
 
         public List<(string itemName, int quantity)> Inventory
         {
@@ -95,6 +101,11 @@ namespace Demo_Classes
         public Monster()
         {
             //
+            // instantiate (create) a list for the Monster object's children
+            //
+            _children = new List<string>();
+
+            //
             // instantiate (create) a list for the Monster object's inventory
             //
             _inventory = new List<(string item, int quantity)>();
@@ -119,6 +130,11 @@ namespace Demo_Classes
             _age = age;
             _mood = mood;
             _isAlive = isAlive;
+
+            //
+            // instantiate (create) a list for the Monster object's children
+            //
+            _children = new List<string>();
 
             //
             // instantiate (create) a list for the Monster object's inventory

@@ -9,7 +9,7 @@ namespace Demo_Classes
     // **************************************************
     //
     // Title: Demo - Classes
-    // Description: Demonstration of implementing simple classes
+    // Description: Demonstration of implementing CRUD with classes
     // Application Type: Console
     // Author: Velis, John
     // Dated Created: 3/28/2020
@@ -144,6 +144,11 @@ namespace Demo_Classes
                 }
 
                 //
+                // ***** Children *****
+                //
+                DisplayUpdateChildren(monster);
+
+                //
                 // ***** Inventory *****
                 //
                 Console.WriteLine(TAB + "Updating the inventory will be available in a later version."); //TODO Add 
@@ -153,7 +158,7 @@ namespace Demo_Classes
                 //
                 DisplayUpdateTreasureChest(monster);
 
-                DisplayContinuePrompt();
+                DisplayMenuPrompt("Main");
             }
         }
 
@@ -178,6 +183,9 @@ namespace Demo_Classes
             monster.Mood = mood;
             monster.IsAlive = true; // all monsters are created alive
 
+            DisplayScreenHeader("Add Children");
+            DisplayAddChildren(monster);
+
             DisplayScreenHeader("Add Monster");
             DisplayAddInventoryItems(monster);
 
@@ -195,6 +203,82 @@ namespace Demo_Classes
             Console.WriteLine(TAB + $"{monster.Name} has been added to the list of monsters.");
 
             DisplayMenuPrompt("Main");
+        }
+
+        /// <summary>
+        /// add children to the monster
+        /// </summary>
+        /// <param name="monster">monster</param>
+        static void DisplayAddChildren(Monster monster)
+        {
+            string name;
+
+            DisplayScreenHeader("Add Children");
+
+            Console.WriteLine(TAB + "Enter the name of the child.");
+            Console.WriteLine(TAB + "To stop adding children, enter \"done\" for the name.");
+            Console.WriteLine();
+
+            do
+            {
+                Console.Write(TAB + "Child name: ");
+                name = Console.ReadLine();
+
+                if (name.ToLower() == "done") break;
+
+                monster.Children.Add(name);
+            } while (true); // continue looping until the break command is executed
+
+            Console.WriteLine();
+            Console.WriteLine(TAB + $"You have added {monster.Children.Count} children to the monster.");
+            Console.WriteLine();
+            ChildrenList(monster);
+
+            DisplayContinuePrompt();
+        }
+
+        /// <summary>
+        /// update children
+        /// </summary>
+        /// <param name="monster">monster</param>
+        static void DisplayUpdateChildren(Monster monster)
+        {
+            string userResponse;
+
+            //
+            // lists used in the foreach statement cannot be modified in the loop
+            // generate a new list of children names to reference in the foreach loop
+            //
+            List<string> childrenNames = new List<string>(monster.Children);
+
+            DisplayScreenHeader("Update Children");
+
+            ChildrenList(monster);
+
+            Console.WriteLine();
+            Console.WriteLine(TAB + "To keep the current child name, type Enter.");
+            Console.WriteLine(TAB + "To keep the delete child name, type \"delete\".");
+            Console.WriteLine(TAB + "To keep the change child name, type the new name.");
+            Console.WriteLine();
+
+            foreach (string child in childrenNames)
+            {
+                Console.Write(TAB + $"{child}: >");
+                userResponse = Console.ReadLine();
+                if (userResponse == "delete")
+                {
+                    monster.Children.Remove(child);
+                }
+                else if (userResponse != "")
+                {
+                    monster.Children[monster.Children.IndexOf(child)] = userResponse;
+                }
+            }
+
+            Console.WriteLine();
+            ChildrenList(monster);
+
+            DisplayContinuePrompt();
         }
 
         /// <summary>
@@ -236,6 +320,8 @@ namespace Demo_Classes
 
             Console.WriteLine();
             TreasureChestList(monster);
+
+            DisplayContinuePrompt();
         }
 
         /// <summary>
@@ -432,6 +518,12 @@ namespace Demo_Classes
                     IsAlive = true,
                     Age = 145,
                     Mood = Monster.Attitude.happy,
+                    Children = new List<string>()
+                    {
+                        "Fred",
+                        "Mary",
+                        "Tom"
+                    },
                     Inventory = new List<(string itemName, int quantity)>()
                     {
                         ("bread", 2),
@@ -456,6 +548,10 @@ namespace Demo_Classes
                     IsAlive = true,
                     Age = 113,
                     Mood = Monster.Attitude.happy,
+                    Children = new List<string>()
+                    {
+                        "Emma"
+                    },
                     Inventory = new List<(string itemName, int quantity)>()
                     {
                         ("rose", 2),
@@ -490,9 +586,32 @@ namespace Demo_Classes
             Console.WriteLine($"\tAge: {monster.Age}");
             Console.WriteLine($"\tMood: {monster.Mood}");
             Console.WriteLine();
+            ChildrenList(monster);
+            Console.WriteLine();
             InventoryList(monster);
             Console.WriteLine();
             TreasureChestList(monster);
+        }
+
+        /// <summary>
+        /// generate and display a table of the Monster object's children
+        /// </summary>
+        /// <param name="monster">Monster object</param>
+        static void ChildrenList(Monster monster)
+        {
+            Console.WriteLine("\tCurrent Children");
+            Console.WriteLine(
+                TAB +
+                "Child".PadRight(20));
+            Console.WriteLine(
+                TAB +
+                "---------".PadRight(20));
+            foreach (string child in monster.Children)
+            {
+                Console.WriteLine(
+                    TAB +
+                    child.PadRight(20));
+            }
         }
 
         /// <summary>
@@ -712,7 +831,7 @@ namespace Demo_Classes
         /// <param name="foreground">foreground color</param>
         static void SetTheme(ConsoleColor background, ConsoleColor foreground)
         {
-            Console.WindowHeight = 30;
+            Console.WindowHeight = 40;
             Console.BackgroundColor = background;
             Console.ForegroundColor = foreground;
             Console.Clear();
