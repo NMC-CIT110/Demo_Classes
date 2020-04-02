@@ -58,6 +58,13 @@ namespace Demo_Classes
             Monster sid = new Monster(1001,"Sid", 145, Monster.Attitude.nice, true);
 
             //
+            // add children to Monster object
+            //
+            sid.Children.Add("Fred");
+            sid.Children.Add("Mary");
+            sid.Children.Add("Debbie");
+
+            //
             // add items and quantities to the Monster object's Inventory property
             //
             sid.Inventory.Add(("Apples", 12));
@@ -90,12 +97,38 @@ namespace Demo_Classes
             Console.WriteLine($"\tAlive: {(monster.IsAlive ? "Yes" : "No")}");
             Console.WriteLine($"\tAge: {monster.Age}");
             Console.WriteLine($"\tMood: {monster.Mood}");
+
+            Console.WriteLine();
+            ChildrenList(monster);
+
             Console.WriteLine();
             InventoryList(monster);
+
             Console.WriteLine();
             TreasureChestList(monster);
 
             DisplayContinuePrompt();
+        }
+
+        /// <summary>
+        /// generate and display a table of the Monster object's children
+        /// </summary>
+        /// <param name="monster">Monster object</param>
+        static void ChildrenList(Monster monster)
+        {
+            Console.WriteLine("\tCurrent Children");
+            Console.WriteLine(
+                "\t" +
+                "Child".PadRight(20));
+            Console.WriteLine(
+                "\t" +
+                "---------".PadRight(20));
+            foreach (string child in monster.Children)
+            {
+                Console.WriteLine(
+                    "\t" +
+                    child.PadRight(20));
+            }
         }
 
         /// <summary>
@@ -246,7 +279,7 @@ namespace Demo_Classes
         /// <param name="foreground">foreground color</param>
         static void SetTheme(ConsoleColor background, ConsoleColor foreground)
         {
-            Console.WindowHeight = 30;
+            Console.WindowHeight = 40;
             Console.BackgroundColor = background;
             Console.ForegroundColor = foreground;
             Console.Clear();

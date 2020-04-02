@@ -71,6 +71,7 @@ namespace Demo_Classes
             get { return _isAlive; }
             set { _isAlive = value; }
         }
+
         public List<string> Children
         {
             get { return _children; }
