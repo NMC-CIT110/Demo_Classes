@@ -187,6 +187,7 @@ namespace Demo_Classes
                     treasureItem.Value.ToString().PadRight(12) +
                     treasureItemValue.ToString().PadRight(12));
             }
+
             Console.WriteLine();
             Console.WriteLine(
                 "\t" +

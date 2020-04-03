@@ -210,7 +210,7 @@ namespace Demo_Classes
                 return $"It appears that {_name} is now dead and unable to respond.";
             }
         }
-        
+
         /// <summary>
         /// randomly, changes and returns a new mood
         /// </summary>
@@ -223,7 +223,7 @@ namespace Demo_Classes
                 _mood = Attitude.angry;
             else if (moodQuotient <= 50)
                 _mood = Attitude.happy;
-            else if (moodQuotient <= 50)
+            else if (moodQuotient <= 75)
                 _mood = Attitude.nice;
             else
                 _mood = Attitude.sad;
