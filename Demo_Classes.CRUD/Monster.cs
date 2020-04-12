@@ -24,7 +24,6 @@ namespace Demo_Classes
             nice
         }
 
-
         #endregion
 
         #region FIELDS
@@ -223,7 +222,7 @@ namespace Demo_Classes
                 _mood = Attitude.angry;
             else if (moodQuotient <= 50)
                 _mood = Attitude.happy;
-            else if (moodQuotient <= 50)
+            else if (moodQuotient <= 75)
                 _mood = Attitude.nice;
             else
                 _mood = Attitude.sad;

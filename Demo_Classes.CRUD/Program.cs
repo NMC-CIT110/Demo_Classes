@@ -114,7 +114,7 @@ namespace Demo_Classes
                 {
                     if (!Enum.TryParse(userResponse, out Monster.Attitude mood))
                     {
-                        Console.WriteLine(TAB + "You must enter an integer value between 0 and 1000.");
+                        Console.WriteLine(TAB + "You must enter a proper mood name.");
                         Console.WriteLine(TAB + "Please try again.");
                         Console.WriteLine();
                         GetIsValidEnum<Monster.Attitude>(TAB + $"Mood: {monster.Mood} >", 3, out mood);
@@ -135,11 +135,11 @@ namespace Demo_Classes
                         Console.WriteLine(TAB + "Please try again.");
                         Console.WriteLine();
                         GetIsValidYesNoBool($"Alive: {(monster.IsAlive ? "Yes" : "No")} >", 3, out bool alive);
-                        monster.IsAlive = alive;
+                        monster.IsAlive = alive; // TODO check code
                     }
                     else
                     {
-                        monster.IsAlive = userResponse == "yes" ? true : false;
+                        monster.IsAlive = (userResponse == "yes") ? true : false;
                     }
                 }
 
@@ -160,6 +160,8 @@ namespace Demo_Classes
 
                 DisplayMenuPrompt("Main");
             }
+
+            // TODO - add else to Update monster method
         }
 
         /// <summary>
@@ -343,7 +345,9 @@ namespace Demo_Classes
             {
                 Console.Write(TAB + "Item name: ");
                 name = Console.ReadLine();
+
                 if (name.ToLower() == "done") break;
+
                 GetIsValidInteger(TAB + "Item quantity: ", 1, 1000, 3, out quantity); // not checking for maximum attempts
                 monster.Inventory.Add((name, quantity));
                 Console.WriteLine();
@@ -375,7 +379,7 @@ namespace Demo_Classes
             {
                 Console.WriteLine();
                 GetIsValidYesNo($"Are you sure you want to delete the monster named {monster.Name}?", 3, out string yesNoChoice);
-                if (yesNoChoice == "yes")
+                if (yesNoChoice.ToLower() == "yes")
                 {
                     monsters.Remove(monster);
                     Console.WriteLine();
@@ -567,7 +571,7 @@ namespace Demo_Classes
                         {TreasureType.ruby, 0},
                         {TreasureType.emerald, 1}
                     }
-                },
+                }
             };
 
             return monsters;
